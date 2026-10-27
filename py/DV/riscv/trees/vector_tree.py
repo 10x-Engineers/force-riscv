@@ -146,14 +146,12 @@ vinteger_instructions = {
     "VQMACCU.VV##RISCV": 10,
     "VQMACCU.VX##RISCV": 10,
     "VQMACCUS.VX##RISCV": 10,
-    "VMERGE/VMV.VI##RISCV": 10,  # ISA has vmerge.vim
-    "VMERGE/VMV.VV##RISCV": 10,  # ISA has vmerge.vvm
-    "VMERGE/VMV.VX##RISCV": 10,  # ISA has vmerge.vxm
-    # These move instructions are missing from v_instructions.xml.
-    # Appears generation was corrupted.
-    # vmv.v.v
-    # vmv.v.x
-    # vmv.v.i
+    "VMERGE.VIM##RISCV": 10,
+    "VMERGE.VVM##RISCV": 10,
+    "VMERGE.VXM##RISCV": 10,
+    "VMV.V.I##RISCV": 10,
+    "VMV.V.V##RISCV": 10,
+    "VMV.V.X##RISCV": 10,
 }
 
 vinteger_map = InstructionMap("vinteger_instructions", vinteger_instructions)
@@ -289,32 +287,29 @@ vfloating_point_instructions = {
     "VMFNE.VF##RISCV": 10,
     "VMFNE.VV##RISCV": 10,
     "VFCLASS.V##RISCV": 10,
-    "VFMERGE.VF/VFMV.VF##RISCV": 10,  # ISA has vfmerge.vfm
-    # ISA has vfmv.v.f which appears to have been corrupted in the generation
-    # ISA has 6 VFxCVT type instructions - the "rtz" flavor that are
-    # missing from the v_instructions.xml.
-    # These were added in Version 0.9 of V spec
-    #   vfcvt.rtz.xu.f.v
-    #   vfcvt.rtz.x.f.v
-    #   vfwcvt.rtz.xu.f.v
-    #   vfwcvt.rtz.x.f.v
-    #   vfncvt.rtz.xu.f.w
-    #   vfncvt.rtz.x.f.w
+    "VFMERGE.VFM##RISCV": 10,
+    "VFMV.V.F##RISCV": 10,
     "VFCVT.F.X.V##RISCV": 10,
     "VFCVT.F.XU.V##RISCV": 10,
     "VFCVT.X.F.V##RISCV": 10,
     "VFCVT.XU.F.V##RISCV": 10,
+    "VFCVT.RTZ.X.F.V##RISCV": 10,
+    "VFCVT.RTZ.XU.F.V##RISCV": 10,
     "VFWCVT.F.F.V##RISCV": 10,
     "VFWCVT.F.X.V##RISCV": 10,
     "VFWCVT.F.XU.V##RISCV": 10,
     "VFWCVT.X.F.V##RISCV": 10,
     "VFWCVT.XU.F.V##RISCV": 10,
+    "VFWCVT.RTZ.X.F.V##RISCV": 10,
+    "VFWCVT.RTZ.XU.F.V##RISCV": 10,
     "VFNCVT.F.F.W##RISCV": 10,
     "VFNCVT.F.X.W##RISCV": 10,
     "VFNCVT.F.XU.W##RISCV": 10,
     "VFNCVT.ROD.F.F.W##RISCV": 10,
     "VFNCVT.X.F.W##RISCV": 10,
     "VFNCVT.XU.F.W##RISCV": 10,
+    "VFNCVT.RTZ.X.F.W##RISCV": 10,
+    "VFNCVT.RTZ.XU.F.W##RISCV": 10,
 }
 
 vfloating_point_map = InstructionMap("vfloating_point_instructions", vfloating_point_instructions)

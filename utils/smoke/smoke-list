@@ -25,6 +25,7 @@ rv64_integer     config/riscv_rv64.config  utils/smoke/riscv_force.py
 rv64_random      config/riscv_rv64.config  examples/riscv/basic_random_01_force.py  --options instruction_count=16
 rv64_loop        config/riscv_rv64.config  tests/riscv/loop/loop_basic_force.py
 rv64_vector_add  config/riscv_rv64.config  tests/riscv/vector/vector_simple_add_force.py
+rv64_vector_moves_rtz  config/riscv_rv64.config  tests/riscv/vector/vector_moves_and_rtz_cvt_force.py
 
 # --- config/riscv_rv32.config : RV32 ---
 rv32_add_sra     config/riscv_rv32.config  utils/smoke/test_force.py
