@@ -11,7 +11,12 @@
 #   instruction_count=N   how many instructions the template emits
 #   loop_count=N          iterations for the loop template
 #   vsew=E                vector element width field (0=e8 1=e16 2=e32 3=e64)
-#   vlmul=M               vector register group (0=m1 1=m2 2=m4 3=m8)
+#   vlmul=M               vector register group (0=m1 1=m2 2=m4 3=m8 5=mf8 6=mf4 7=mf2)
+#                         Fractional LMUL is only legal when SEW is narrower than ELEN.
+#   vta=0|1               tail undisturbed (0) or agnostic (1)
+#   vma=0|1               mask undisturbed (0) or agnostic (1)
+#   vm=0|1                masked (0) or unmasked (1); applies to the int group
+#   group=NAME            int, widen, muldiv, carry, fixed, float, mask, permute, reduce
 #
 # Paths are relative to the repository root.
 # config/riscv-cva6.config is not listed: its XML paths are no longer in the tree.
@@ -34,6 +39,34 @@ rv64_vec_e64m1   config/riscv_rv64.config  utils/smoke/vector_config_force.py  -
 rv64_vec_e32m2   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=1
 rv64_vec_e16m4   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=1,vlmul=2
 rv64_vec_e8m8    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=0,vlmul=3
+# Fractional LMUL (spec section 3.4). ELEN is 64, so mf* is legal only for SEW < 64.
+rv64_vec_e32mf2  config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=2,vlmul=7
+rv64_vec_e16mf2  config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=1,vlmul=7
+rv64_vec_e16mf4  config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=1,vlmul=6
+rv64_vec_e8mf2   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=0,vlmul=7
+rv64_vec_e8mf4   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=0,vlmul=6
+rv64_vec_e8mf8   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=0,vlmul=5
+# Tail and mask policy (spec section 3.4.3), and an explicitly masked integer run.
+rv64_vec_ta_ma   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=2,vlmul=0,vta=1,vma=1
+rv64_vec_tu_mu   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=2,vlmul=0,vta=0,vma=0
+rv64_vec_masked  config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=2,vlmul=0,vm=0
+# Instruction groups from the V spec that the integer-only lines do not cover.
+rv64_vec_widen    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=widen
+rv64_vec_muldiv   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=muldiv
+rv64_vec_carry    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=carry
+rv64_vec_fixed    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=fixed
+rv64_vec_float    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=float
+rv64_vec_mask     config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=mask
+rv64_vec_permute  config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=permute
+rv64_vec_reduce   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=reduce
+rv64_vec_strided  config/riscv_rv64.config  tests/riscv/vector/vector_strided_load_store_force.py  --options instruction_count=64
+rv64_vec_indexed  config/riscv_rv64.config  tests/riscv/vector/vector_indexed_load_store_force.py  --options instruction_count=64
+rv64_vec_segment  config/riscv_rv64.config  tests/riscv/vector/vector_unit_stride_segment_load_store_force.py  --options instruction_count=32
+rv64_vec_whole_ldst  config/riscv_rv64.config  tests/riscv/vector/vector_whole_register_load_store_force.py  --options instruction_count=32
+rv64_vec_whole_move  config/riscv_rv64.config  tests/riscv/vector/vector_whole_register_move_force.py  --options instruction_count=32
+rv64_vec_vsetvli  config/riscv_rv64.config  tests/riscv/vector/vector_vsetvli_force.py  --options instruction_count=32
+rv64_vec_vsetivli config/riscv_rv64.config  tests/riscv/vector/vector_vsetivli_force.py  --options instruction_count=32
+rv64_vec_vsetvl   config/riscv_rv64.config  tests/riscv/vector/vector_vsetvl_force.py  --options instruction_count=32
 
 # --- config/riscv_rv32.config : RV32 ---
 rv32_add_sra     config/riscv_rv32.config  utils/smoke/test_force.py  --options instruction_count=128
@@ -41,8 +74,12 @@ rv32_integer     config/riscv_rv32.config  tests/riscv/rv32/rv32i_force.py  --op
 rv32_loop        config/riscv_rv32.config  tests/riscv/loop/loop_basic_force.py  --options loop_count=128
 rv32_vec_e32m1   config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=0
 rv32_vec_e16m2   config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=1,vlmul=1
+rv32_vec_e8m1    config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=0,vlmul=0
+rv32_vec_e16mf2  config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=1,vlmul=7
 
 # --- config/riscv_rv64_sv39.config : RV64 with Sv39 page tables ---
 rv64_sv39_add_sra  config/riscv_rv64_sv39.config  utils/smoke/test_force.py  --options instruction_count=128
 rv64_sv39_random   config/riscv_rv64_sv39.config  examples/riscv/basic_random_01_force.py  --options instruction_count=512
 rv64_sv39_vec_e32m1  config/riscv_rv64_sv39.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=0
+rv64_sv39_vec_e64m1  config/riscv_rv64_sv39.config  utils/smoke/vector_config_force.py  --options instruction_count=128,vsew=3,vlmul=0
+rv64_sv39_vec_float  config/riscv_rv64_sv39.config  utils/smoke/vector_config_force.py  --options instruction_count=64,vsew=2,vlmul=0,group=float

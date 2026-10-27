@@ -176,7 +176,7 @@ Lines that start with `#` are comments. To generate another test, copy a line, g
 
 Every smoke-list line asks for a long sequence (typically 128 to 512 instructions, or a 128-iteration loop). A bare `bin/friscv -t utils/smoke/test_force.py` without `--options` is still the short two-instruction demo.
 
-Vector lines use [`utils/smoke/vector_config_force.py`](utils/smoke/vector_config_force.py). `vsew` is the element width (`0` = 8-bit, `1` = 16-bit, `2` = 32-bit, `3` = 64-bit). `vlmul` is the register group (`0` = m1, `1` = m2, `2` = m4, `3` = m8). The RV64 list covers those SEW and LMUL combinations, plus an RV32 and an Sv39 vector case, and longer vector-add, move/RTZ, and unit-stride load/store runs.
+Vector lines use [`utils/smoke/vector_config_force.py`](utils/smoke/vector_config_force.py). `vsew` is the element width (`0` = 8-bit, `1` = 16-bit, `2` = 32-bit, `3` = 64-bit). `vlmul` is the register group (`0` = m1, `1` = m2, `2` = m4, `3` = m8, `7` = mf2, `6` = mf4, `5` = mf8). Fractional LMUL is only requested when the element width is narrower than the 64-bit element limit. `vta` and `vma` select tail and mask agnostic (`1`) or undisturbed (`0`). `vm=0` forces masked execution. `group` selects a V-spec class: `int`, `widen`, `muldiv`, `carry`, `fixed`, `float`, `mask`, `permute`, or `reduce`. Separate lines cover strided and indexed loads, segments, whole-register move and load/store, and `vsetvli` / `vsetivli` / `vsetvl`.
 
 Run the whole list locally (after `source ./setenv.bash` and `make`):
 

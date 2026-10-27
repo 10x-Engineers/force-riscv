@@ -26,20 +26,20 @@ vinteger_instructions = {
     "VRSUB.VX##RISCV": 10,
     "VWADD.VV##RISCV": 10,
     "VWADD.VX##RISCV": 10,
-    "VWADD.W.VV##RISCV": 10,  # ISA has vwadd.wv
-    "VWADD.W.VX##RISCV": 10,  # ISA has vwadd.wx
+    "VWADD.WV##RISCV": 10,
+    "VWADD.WX##RISCV": 10,
     "VWADDU.VV##RISCV": 10,
     "VWADDU.VX##RISCV": 10,
-    "VWADDU.W.VV##RISCV": 10,  # ISA has vwaddu.wv
-    "VWADDU.W.VX##RISCV": 10,  # ISA has vwaddu.wx
+    "VWADDU.WV##RISCV": 10,
+    "VWADDU.WX##RISCV": 10,
     "VWSUB.VV##RISCV": 10,
     "VWSUB.VX##RISCV": 10,
-    "VWSUB.W.VV##RISCV": 10,  # ISA has vwsub.wv
-    "VWSUB.W.VX##RISCV": 10,  # ISA has vwsub.wx
+    "VWSUB.WV##RISCV": 10,
+    "VWSUB.WX##RISCV": 10,
     "VWSUBU.VV##RISCV": 10,
     "VWSUBU.VX##RISCV": 10,
-    "VWSUBU.W.VV##RISCV": 10,  # ISA has vwsubu.wv
-    "VWSUBU.W.VX##RISCV": 10,  # ISA has vwsubu.wx
+    "VWSUBU.WV##RISCV": 10,
+    "VWSUBU.WX##RISCV": 10,
     "VADC.VI##RISCV": 10,
     "VADC.VV##RISCV": 10,
     "VADC.VX##RISCV": 10,
@@ -171,50 +171,53 @@ vpermutation_instructions = {
     "VRGATHER.VI##RISCV": 10,
     "VRGATHER.VV##RISCV": 10,
     "VRGATHER.VX##RISCV": 10,
-    "VCOMPRESS.VV##RISCV": 10,
+    "VRGATHEREI16.VV##RISCV": 10,
+    "VCOMPRESS.VM##RISCV": 10,
+    "VFSLIDE1UP.VF##RISCV": 10,
+    "VFSLIDE1DOWN.VF##RISCV": 10,
 }
 
 vpermutation_map = ("vpermutation_instructions", vpermutation_instructions)
 
 
 vmask_instructions = {
-    "VMAND.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMANDNOT.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMNAND.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMNOR.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMOR.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMORNOT.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMXNOR.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VMXOR.VV##RISCV": 10,  # ISA has .mm instead of .vv
-    "VPOPC##RISCV": 10,  # ISA has vpopc.m
-    "VFIRST##RISCV": 10,  # ISA has vfirst.m
-    "VMSBF##RISCV": 10,  # ISA has vmsbf.m
-    "VMSIF##RISCV": 10,  # ISA has vmsif.m
-    "VMSOF##RISCV": 10,  # ISA has vmsof.m
-    "VIOTA##RISCV": 10,  # ISA has viota.m
-    "VID##RISCV": 10,  # ISA has vid.v
+    "VMAND.MM##RISCV": 10,
+    "VMANDNOT.MM##RISCV": 10,
+    "VMNAND.MM##RISCV": 10,
+    "VMNOR.MM##RISCV": 10,
+    "VMOR.MM##RISCV": 10,
+    "VMORNOT.MM##RISCV": 10,
+    "VMXNOR.MM##RISCV": 10,
+    "VMXOR.MM##RISCV": 10,
+    "VCPOP.M##RISCV": 10,
+    "VFIRST.M##RISCV": 10,
+    "VMSBF.M##RISCV": 10,
+    "VMSIF.M##RISCV": 10,
+    "VMSOF.M##RISCV": 10,
+    "VIOTA.M##RISCV": 10,
+    "VID.V##RISCV": 10,
 }
 
 vmask_map = InstructionMap("vmask_instructions", vmask_instructions)
 
 
 vreduction_instructions = {
-    "VREDAND.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDMAX.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDMAXU.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDMIN.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDMINU.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDOR.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VREDXOR.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VWREDSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VWREDSUMU.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFREDMAX.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFREDMIN.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFREDOSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFREDSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFWREDOSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
-    "VFWREDSUM.VV##RISCV": 10,  # ISA has .vs instead of .vv
+    "VREDAND.VS##RISCV": 10,
+    "VREDMAX.VS##RISCV": 10,
+    "VREDMAXU.VS##RISCV": 10,
+    "VREDMIN.VS##RISCV": 10,
+    "VREDMINU.VS##RISCV": 10,
+    "VREDOR.VS##RISCV": 10,
+    "VREDSUM.VS##RISCV": 10,
+    "VREDXOR.VS##RISCV": 10,
+    "VWREDSUM.VS##RISCV": 10,
+    "VWREDSUMU.VS##RISCV": 10,
+    "VFREDMAX.VS##RISCV": 10,
+    "VFREDMIN.VS##RISCV": 10,
+    "VFREDOSUM.VS##RISCV": 10,
+    "VFREDUSUM.VS##RISCV": 10,
+    "VFWREDOSUM.VS##RISCV": 10,
+    "VFWREDUSUM.VS##RISCV": 10,
 }
 
 vreduction_map = InstructionMap("vreduction_instructions", vreduction_instructions)
@@ -228,12 +231,12 @@ vfloating_point_instructions = {
     "VFRSUB.VF##RISCV": 10,
     "VFWADD.VF##RISCV": 10,
     "VFWADD.VV##RISCV": 10,
-    "VFWADD.W.VF##RISCV": 10,  # ISA has vfwadd.wf
-    "VFWADD.W.VV##RISCV": 10,  # ISA has vfwadd.wv
+    "VFWADD.WF##RISCV": 10,
+    "VFWADD.WV##RISCV": 10,
     "VFWSUB.VF##RISCV": 10,
     "VFWSUB.VV##RISCV": 10,
-    "VFWSUB.W.VF##RISCV": 10,  # ISA has vfwsub.wf
-    "VFWSUB.W.VV##RISCV": 10,  # ISA has vfwsub.wv
+    "VFWSUB.WF##RISCV": 10,
+    "VFWSUB.WV##RISCV": 10,
     "VFMUL.VF##RISCV": 10,
     "VFMUL.VV##RISCV": 10,
     "VFDIV.VF##RISCV": 10,
@@ -350,12 +353,12 @@ vfixed_point_instructions = {
     "VSSRL.VI##RISCV": 10,
     "VSSRL.VV##RISCV": 10,
     "VSSRL.VX##RISCV": 10,
-    "VNCLIP.VI##RISCV": 10,  # ISA has vnclip.wi
-    "VNCLIP.VV##RISCV": 10,  # ISA has vnclip.wv
-    "VNCLIP.VX##RISCV": 10,  # ISA has vnclip.wx
-    "VNCLIPU.VI##RISCV": 10,  # ISA has vnclipu.wi
-    "VNCLIPU.VV##RISCV": 10,  # ISA has vnclipu.wv
-    "VNCLIPU.VX##RISCV": 10,  # ISA has vnclipu.wx
+    "VNCLIP.WI##RISCV": 10,
+    "VNCLIP.WV##RISCV": 10,
+    "VNCLIP.WX##RISCV": 10,
+    "VNCLIPU.WI##RISCV": 10,
+    "VNCLIPU.WV##RISCV": 10,
+    "VNCLIPU.WX##RISCV": 10,
 }
 
 vfixed_point_map = InstructionMap("vfixed_point_instructions", vfixed_point_instructions)
