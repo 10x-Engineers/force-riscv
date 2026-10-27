@@ -550,7 +550,7 @@ class RegisterFile:
                 choice_elements = None
             found_choice = None
             if choice_elements is not None:
-                for choice in choice_elements[0].getchildren():
+                for choice in choice_elements[0][:]:
                     choice_name = choice.attrib["name"]
                     if choice_name == aRegister["register"]:
                         found_choice = choice
@@ -603,7 +603,7 @@ class RegisterFile:
                                 bit_fields_to_be_removed.remove(bit.attrib["shift"])
                                 break
 
-                    if len(register_field.getchildren()) is 0:
+                    if len(register_field) == 0:
                         register_field_to_be_removed.append(register_field)
                     else:
                         register_field.attrib["size"] = str(
@@ -648,7 +648,7 @@ class RegisterFile:
                         continue
 
                     physical_register = None
-                    if len(register.getchildren()) > 0:
+                    if len(register[:]) > 0:
                         physical_register = register[0].attrib["physical_register"]
                     elif "physical_register" in aRegister:
                         physical_register = aRegister["physical_register"]
@@ -808,21 +808,21 @@ class RegisterFile:
     # provided tree
     def deleteRegisterFromTree(self, aTree, aRegister):
         physical_registers = aTree.find("physical_registers")
-        for physical_register in physical_registers.getchildren():
+        for physical_register in physical_registers[:]:
             if aRegister.get("register") == physical_register.attrib["name"]:
                 physical_registers.remove(physical_register)
 
         register_file = aTree.find("register_file")
-        for register in register_file.getchildren():
+        for register in register_file[:]:
             if aRegister.get("register") == register.attrib["name"]:
                 register_file.remove(register)
 
         choices = aTree.findall("choices")
         if choices:
-            for choice in choices[0].getchildren():
+            for choice in choices[0][:]:
                 if aRegister.get("register") == choice.attrib["name"]:
                     choices[0].remove(choice)
-            for choice in choices[1].getchildren():
+            for choice in choices[1][:]:
                 if aRegister.get("register") == choice.attrib["name"]:
                     choices[1].remove(choice)
 
@@ -834,7 +834,7 @@ class RegisterFile:
     def deleteRegisterChoice(self, aRegisterChoice):
         choices_trees = self.mRegisterChoicesTree.findall("choices")
         for choices in choices_trees:
-            for choice in choices.getchildren():
+            for choice in choices[:]:
                 if aRegisterChoice.get("name") == choice.attrib["name"]:
                     choices.remove(choice)
 
@@ -847,7 +847,7 @@ class RegisterFile:
     # Adds specified physical register to the provided tree
     def addPhysicalRegisterToTree(self, aTree, aRegister):
         physical_registers = aTree.find("physical_registers")
-        for physical_register in physical_registers.getchildren():
+        for physical_register in physical_registers[:]:
             name = physical_register.attrib["name"]
             if aRegister.get("physical_register") == name or aRegister.get("register") == name:
                 return
@@ -910,7 +910,7 @@ class RegisterFile:
                     if register.attrib["name"] == aAttribute["register"]:
                         for key, value in aAttribute.items():
                             if key == "physical_register":
-                                for field in register.getchildren():
+                                for field in register[:]:
                                     field.attrib["physical_register"] = value
                             elif key != "register" and key != "target":
                                 register.attrib[key] = value
@@ -941,7 +941,7 @@ class RegisterFile:
         for field_choice in field_choices:
             if field_choice.attrib["name"] == aChoice["field_name"]:
                 update_flag = True
-                for choice in field_choice.getchildren():
+                for choice in field_choice[:]:
                     field_choice.remove(choice)
                 for choice in aChoice["choices"]:
                     weight = child.get("weight", 10)
@@ -1014,14 +1014,14 @@ class RegisterFile:
 
     # Sorts tree provided via root
     def sortTree(self, aRoot, aAttribute):
-        if len(aRoot.getchildren()) > 0:
+        if len(aRoot[:]) > 0:
             self.sortChildrenByAttribute(aRoot, aAttribute)
             for child in aRoot:
                 self.sortTree(child, aAttribute)
 
     # Sorts children of supplied parent node according to attribute
     def sortChildrenByAttribute(self, aParentNode, aAttribute):
-        if len(aParentNode.getchildren()) > 0 and aAttribute in aParentNode[0].attrib:
+        if len(aParentNode[:]) > 0 and aAttribute in aParentNode[0].attrib:
             aParentNode[:] = sorted(
                 aParentNode,
                 key=lambda child: self.getProperSortKey(child, aAttribute),

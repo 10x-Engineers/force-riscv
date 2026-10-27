@@ -277,8 +277,8 @@ class SysUtils:
             Msg.err("FileName: %s" % (str(my_exc_tb.tb_frame.f_code.co_filename)))
             Msg.err("Line: %d" % (int(my_exc_tb.tb_lineno)))
             Msg.err("Name: %s" % (str(my_exc_tb.tb_frame.f_code.co_name)))
-            Msg.err("Type: %s" % (str(my_exc_type.name)))
-            Msg.err("Msg : %s" % (str(my_exc_val.message)))
+            Msg.err("Type: %s" % (my_exc_type.__name__))
+            Msg.err("Msg : %s" % (my_exc_val))
             Msg.error_trace(my_exc_tb)
 
         return None

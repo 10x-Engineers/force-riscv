@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-INC_PATHS = -I../../../../base/inc -I../../../../3rd_party/inc -I../../../inc
+INC_PATHS = -I../../../../base/inc -isystem ../../../../3rd_party/inc -I../../../inc
 
 include Makefile.target
 include ../../../../utils/make/Makefile.common

@@ -21,7 +21,7 @@ include ../../utils/make/Makefile.common
 
 ARCH_ENUM=RISC
 
-INC_PATHS = -I. -I../../base/inc -I../../3rd_party/inc
+INC_PATHS = -I. -I../../base/inc -isystem ../../3rd_party/inc
 
 NODEPS:=clean
 

@@ -22,7 +22,7 @@
 master_config = {
     "rtl": {
         "bld_cfg": "target_config_mod2_gm",
-        "add_meta_args": "tc_mode=force gm=on mod2=on rvbar=50000000 "
+        "add_meta_args": "tc_mode=force gm=on mod2=on rvbar=80000000 "
         "force=on mc=on no_commit_cycles=160000 "
         "force_extra_dly=on inject_rand_interrupt=on "
         "rand_int_type=1 int_deassert_high=100 "

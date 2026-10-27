@@ -151,9 +151,9 @@ class RunWithReport(object):
         return test_dir
 
     def _getDateTimeStr(self):
-        from datetime import datetime
+        from datetime import datetime, timezone
 
-        my_utcdt = datetime.utcnow()
+        my_utcdt = datetime.now(timezone.utc)
         return "%0.4d%0.2d%0.2d_%0.2d%0.2d" % (
             my_utcdt.year,
             my_utcdt.month,

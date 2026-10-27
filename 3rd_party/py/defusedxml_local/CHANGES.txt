@@ -1,6 +1,43 @@
 Changelog
 =========
 
+defusedxml 0.7.1
+---------------------
+
+*Release date: 08-Mar-2021*
+
+- Fix regression ``defusedxml.ElementTree.ParseError`` (#63)
+  The ``ParseError`` exception is now the same class object as
+  ``xml.etree.ElementTree.ParseError`` again.
+
+
+defusedxml 0.7.0
+----------------
+
+*Release date: 4-Mar-2021*
+
+- No changes
+
+
+defusedxml 0.7.0rc2
+-------------------
+
+*Release date: 12-Jan-2021*
+
+- Re-add and deprecate ``defusedxml.cElementTree``
+- Use GitHub Actions instead of TravisCI
+- Restore ``ElementTree`` attribute of ``xml.etree`` module after patching
+
+defusedxml 0.7.0rc1
+-------------------
+
+*Release date: 04-May-2020*
+
+- Add support for Python 3.9
+- ``defusedxml.cElementTree`` is not available with Python 3.9.
+- Python 2 is deprecate. Support for Python 2 will be removed in 0.8.0.
+
+
 defusedxml 0.6.0
 ----------------
 

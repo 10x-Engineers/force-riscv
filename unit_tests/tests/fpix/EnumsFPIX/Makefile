@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 FORCE_DIR = ../../../..
-INC_PATHS = -I$(FORCE_DIR)/fpix/inc -I$(FORCE_DIR)/base/inc -I$(FORCE_DIR)/3rd_party/inc -I../../../utils/inc
+INC_PATHS = -I$(FORCE_DIR)/fpix/inc -I$(FORCE_DIR)/base/inc -isystem $(FORCE_DIR)/3rd_party/inc -I../../../utils/inc
 
 include Makefile.target
 include $(FORCE_DIR)/utils/make/Makefile.common

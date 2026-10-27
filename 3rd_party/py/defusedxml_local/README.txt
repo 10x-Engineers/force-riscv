@@ -23,7 +23,7 @@ defusedxml -- defusing XML bombs and other exploits
     :alt: PyPI downloads
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/ambv/black
+    :target: https://github.com/psf/black
     :alt: Code style: black
 
 ..
@@ -316,6 +316,9 @@ defuse_stdlib() (*experimental*)
 
 defusedxml.cElementTree
 -----------------------
+
+**NOTE** ``defusedxml.cElementTree`` is deprecated and will be removed in a
+future release. Import from ``defusedxml.ElementTree`` instead.
 
 parse(), iterparse(), fromstring(), XMLParser
 

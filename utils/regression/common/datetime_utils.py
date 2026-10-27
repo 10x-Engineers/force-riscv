@@ -20,10 +20,15 @@ from datetime import date, datetime, timedelta, timezone, tzinfo
 from common.sys_utils import SysUtils
 
 
+def _utc_now():
+    """Return the current time as a timezone-aware UTC datetime."""
+    return datetime.now(timezone.utc)
+
+
 class DateTime(object):
     @classmethod
     def YMD(cls, arg_utcdt=None):
-        my_utcdt = SysUtils.ifthen(arg_utcdt is None, datetime.utcnow(), arg_utcdt)
+        my_utcdt = SysUtils.ifthen(arg_utcdt is None, _utc_now(), arg_utcdt)
         return "%0.4d%0.2d%0.2d" % (
             my_utcdt.year,
             my_utcdt.month,
@@ -32,7 +37,7 @@ class DateTime(object):
 
     @classmethod
     def HMS(cls, arg_utcdt=None):
-        my_utcdt = SysUtils.ifthen(arg_utcdt is None, datetime.utcnow(), arg_utcdt)
+        my_utcdt = SysUtils.ifthen(arg_utcdt is None, _utc_now(), arg_utcdt)
         return "%0.2d%0.2d%0.2d" % (
             my_utcdt.hour,
             my_utcdt.minute,
@@ -41,7 +46,7 @@ class DateTime(object):
 
     @classmethod
     def YMD_HMS(cls, arg_utcdt=None):
-        my_utcdt = SysUtils.ifthen(arg_utcdt is None, datetime.utcnow(), arg_utcdt)
+        my_utcdt = SysUtils.ifthen(arg_utcdt is None, _utc_now(), arg_utcdt)
         return "%0.4d%0.2d%0.2d-%0.2d%0.2d%0.2d" % (
             my_utcdt.year,
             my_utcdt.month,
@@ -53,17 +58,17 @@ class DateTime(object):
 
     @classmethod
     def DateAsStr(cls, arg_utcdt=None):
-        my_utcdt = SysUtils.ifthen(arg_utcdt is None, datetime.utcnow(), arg_utcdt)
+        my_utcdt = SysUtils.ifthen(arg_utcdt is None, _utc_now(), arg_utcdt)
         return str(my_utcdt.date())
 
     @classmethod
     def TimeAsStr(cls, arg_utcdt=None):
-        my_utcdt = SysUtils.ifthen(arg_utcdt is None, datetime.utcnow(), arg_utcdt)
+        my_utcdt = SysUtils.ifthen(arg_utcdt is None, _utc_now(), arg_utcdt)
         return str(my_utcdt.time())
 
     @classmethod
     def UTCNow(cls):
-        return datetime.utcnow()
+        return _utc_now()
 
     @classmethod
     def Time(cls):
@@ -71,4 +76,4 @@ class DateTime(object):
 
     @classmethod
     def DateDelta(cls, arg_delta=1):
-        return datetime.utcnow() - timedelta(days=arg_delta)
+        return _utc_now() - timedelta(days=arg_delta)

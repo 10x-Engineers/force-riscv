@@ -36,8 +36,9 @@ add_executable(${PROJECT_NAME} ${ARCH_SRC_LIST} ${THIRD_PARTY_SRC_LIST} ${BASE_S
 target_include_directories(${PROJECT_NAME} PRIVATE
                           ./inc
                           ./../base/inc
-                          ./../3rd_party/inc
                           ./../utils/handcar)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+                          ./../3rd_party/inc)
 
 # link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::module pybind11::embed ${CMAKE_DL_LIBS})

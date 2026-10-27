@@ -6,9 +6,6 @@ file_read_backwards
 .. image:: https://img.shields.io/pypi/v/file_read_backwards.svg
         :target: https://pypi.python.org/pypi/file_read_backwards
 
-.. image:: https://img.shields.io/travis/RobinNil/file_read_backwards.svg?branch=master
-        :target: https://travis-ci.org/RobinNil/file_read_backwards.svg?branch=master
-
 .. image:: https://readthedocs.org/projects/file-read-backwards/badge/?version=latest
         :target: https://file-read-backwards.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
@@ -37,19 +34,7 @@ It supports "\\r", "\\r\\n", and "\\n" as new lines.
 Usage Examples
 --------------
 
-An example of using `file_read_backwards` for `python2.7`::
-
-    #!/usr/bin/env python2.7
-
-    from file_read_backwards import FileReadBackwards
-
-    with FileReadBackwards("/tmp/file", encoding="utf-8") as frb:
-
-        # getting lines by lines starting from the last line up
-        for l in frb:
-            print l
-
-Another example using `python3.3`::
+Another example using `python3.11`::
 
     from file_read_backwards import FileReadBackwards
 
@@ -60,7 +45,7 @@ Another example using `python3.3`::
             print(l)
 
 
-Another way to consume the file is via `readline()`, in `python3.3`::
+Another way to consume the file is via `readline()`, in `python3.11`::
 
     from file_read_backwards import FileReadBackwards
 

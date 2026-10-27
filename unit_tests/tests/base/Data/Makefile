@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 FORCE_DIR = ../../../..
-INC_PATHS = -I$(FORCE_DIR)/riscv/inc -I$(FORCE_DIR)/base/inc -I$(FORCE_DIR)/3rd_party/inc -I$(PYTHON_INC)
+INC_PATHS = -I$(FORCE_DIR)/riscv/inc -I$(FORCE_DIR)/base/inc -isystem $(FORCE_DIR)/3rd_party/inc -I$(PYTHON_INC)
 
 include Makefile.target
 include $(FORCE_DIR)/utils/make/Makefile.common

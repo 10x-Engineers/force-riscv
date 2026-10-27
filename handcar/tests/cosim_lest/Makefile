@@ -19,7 +19,7 @@ ALL_SRCS := $(BASE_SRCS)
 OPTIMIZATION = -O2
 include ../../Makefile.common
 
-INC_PATHS = -I../../inc -Iinc -I../../../3rd_party/inc
+INC_PATHS = -I../../inc -Iinc -isystem ../../../3rd_party/inc
 
 NODEPS:=clean 
 vpath %.cc src

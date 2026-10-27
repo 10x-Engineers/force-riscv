@@ -23,7 +23,7 @@ CLEAN_TARGETS = \
 
 include Makefile.common
 
-INC_PATHS = -I. -I../../3rd_party/inc/ -I./fesvr -I./force_mod -I./riscv -I./softfloat -I./spike_main
+INC_PATHS = -I. -isystem ../../3rd_party/inc/ -I./fesvr -I./force_mod -I./riscv -I./softfloat -I./spike_main
 
 NODEPS:=clean
 

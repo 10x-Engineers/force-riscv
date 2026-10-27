@@ -127,9 +127,9 @@ class QuickSummary(object):
     def view(self, sum_level=SummaryLevel.Fail):
         # Instruction Over Flow Failure Count
         # print( "Regression::view() " )
-        from datetime import datetime
+        from datetime import datetime, timezone
 
-        my_utcdt = datetime.utcnow()
+        my_utcdt = datetime.now(timezone.utc)
         my_file_name = (
             PathUtils().include_trailing_path_delimiter(self.summary_dir)
             + "regression_summary_"

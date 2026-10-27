@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """FileReadBackwards module."""
@@ -8,11 +8,7 @@ import os
 
 from .buffer_work_space import BufferWorkSpace
 
-supported_encodings = [
-    "utf-8",
-    "ascii",
-    "latin-1",
-]  # any encodings that are backward compatible with ascii should work
+supported_encodings = ["utf-8", "ascii", "latin-1"]  # any encodings that are backward compatible with ascii should work
 
 
 class FileReadBackwards:
@@ -26,9 +22,7 @@ class FileReadBackwards:
     In any mode, `close()` can be called to close the file handler..
     """
 
-    def __init__(
-        self, path, encoding="utf-8", chunk_size=io.DEFAULT_BUFFER_SIZE
-    ):
+    def __init__(self, path, encoding="utf-8", chunk_size=io.DEFAULT_BUFFER_SIZE):
         """Constructor for FileReadBackwards.
 
         Args:
@@ -37,20 +31,14 @@ class FileReadBackwards:
             chunk_size (int): How many bytes to read at a time
         """
         if encoding.lower() not in supported_encodings:
-            error_message = "{0} encoding was not supported/tested.".format(
-                encoding
-            )
-            error_message += "Supported encodings are '{0}'".format(
-                ",".join(supported_encodings)
-            )
+            error_message = "{0} encoding was not supported/tested.".format(encoding)
+            error_message += "Supported encodings are '{0}'".format(",".join(supported_encodings))
             raise NotImplementedError(error_message)
 
         self.path = path
         self.encoding = encoding.lower()
         self.chunk_size = chunk_size
-        self.iterator = FileReadBackwardsIterator(
-            io.open(self.path, mode="rb"), self.encoding, self.chunk_size
-        )
+        self.iterator = FileReadBackwardsIterator(io.open(self.path, mode="rb"), self.encoding, self.chunk_size)
 
     def __iter__(self):
         """Return its iterator."""
@@ -83,7 +71,6 @@ class FileReadBackwardsIterator:
 
     This will read backwards line by line a file. It holds an opened file handler.
     """
-
     def __init__(self, fp, encoding, chunk_size):
         """Constructor for FileReadBackwardsIterator
 

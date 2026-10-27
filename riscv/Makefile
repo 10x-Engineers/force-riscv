@@ -25,7 +25,7 @@ include ../utils/make/Makefile.common
 
 ARCH_ENUM=RISCV
 
-INC_PATHS = -I./inc -I../base/inc -I../3rd_party/inc -I$(PYTHON_INC)
+INC_PATHS = -I./inc -I../base/inc -isystem ../3rd_party/inc -I$(PYTHON_INC)
 
 NODEPS:=clean tests
 

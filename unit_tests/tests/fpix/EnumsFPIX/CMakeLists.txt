@@ -36,8 +36,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ./
     ${CMAKE_SOURCE_DIR}/base/inc
     ${CMAKE_SOURCE_DIR}/fpix/inc
-    ${CMAKE_SOURCE_DIR}/3rd_party/inc
     ${CMAKE_SOURCE_DIR}/unit_tests/utils/inc
+    )
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+    ${CMAKE_SOURCE_DIR}/3rd_party/inc
     )
 
 add_test(NAME ${PROJECT_NAME}

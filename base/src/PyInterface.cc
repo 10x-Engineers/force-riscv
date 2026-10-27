@@ -720,9 +720,14 @@ namespace Force {
   void PyInterface::BeginStateRestoreLoop(cuint32 threadId, cuint32 loopRegIndex, cuint32 simCount, cuint32 restoreCount, const py::list& restoreExclusions) const
   {
     set<ERestoreExclusionGroup> restore_exclusions;
+    // pybind11's enum caster leaves a local value that GCC 13 reports as
+    // maybe-uninitialized when the converted enum is inserted into a set.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     for (auto restoreExclusion : restoreExclusions) {
       restore_exclusions.insert(restoreExclusion.cast<ERestoreExclusionGroup>());
     }
+#pragma GCC diagnostic pop
 
     auto gen_req = new GenRestoreRequest(ESequenceType::BeginRestoreLoop, loopRegIndex, simCount, restoreCount, restore_exclusions);
     mpScheduler->GenSequence(threadId, gen_req);

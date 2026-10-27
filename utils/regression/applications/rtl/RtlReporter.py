@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 from common.msg_utils import Msg
-from datetime import datetime
+from datetime import datetime, timezone
 from common.path_utils import PathUtils
 import report
 import os.path
@@ -86,7 +86,7 @@ class RtlReporter(object):
         if not self.setup_report(a_apps_info):
             return
 
-        time_stamp = datetime.utcnow()
+        time_stamp = datetime.now(timezone.utc)
         time_string = "_%0.4d%0.2d%0.2d_%0.2d%0.2d" % (
             time_stamp.year,
             time_stamp.month,

@@ -59,8 +59,8 @@ target_include_directories(${PROJECT_NAME}
                     PRIVATE
                     ./../inc
                     ./../../base/inc
-                    ./../../3rd_party/inc
                     ./../../utils/handcar)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ./../../3rd_party/inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 

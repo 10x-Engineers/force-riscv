@@ -35,8 +35,8 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_include_directories(${PROJECT_NAME}
                     PRIVATE
                     ./
-                    ./../../base/inc
-                    ./../../3rd_party/inc)
+                    ./../../base/inc)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ./../../3rd_party/inc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 

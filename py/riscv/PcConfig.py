@@ -15,8 +15,10 @@
 #
 
 
+# RISC-V Linux, Spike, and QEMU virt start at the DRAM base. The reset
+# trampoline occupies the first 0x40 bytes of that page.
 def get_reset_pc():
-    return 0x50000000
+    return 0x80000000
 
 
 def get_initial_pc(thread_id):
@@ -39,8 +41,10 @@ def get_base_initial_pc():
     return 0x80011000
 
 
+# Next page after the reset trampoline, still below the test body at
+# get_base_initial_pc(). A 0x1000-byte boot region fits in this gap.
 def get_base_boot_pc():
-    return 0x80000000
+    return 0x80001000
 
 
 def get_initial_pc_offset():

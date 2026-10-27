@@ -49,9 +49,7 @@ def weatherResponse(xml):
     handler = WeatherHandler()
     parseString(xml, handler)
     if handler.city == "Aachen":
-        return (
-            "<weather>The weather in %s is terrible.</weather" % handler.city
-        )
+        return "<weather>The weather in %s is terrible.</weather" % handler.city
     else:
         return "<error>Unknown city %s</error>" % handler.city[:500]
 

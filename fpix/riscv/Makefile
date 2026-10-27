@@ -21,7 +21,7 @@ ALL_SRCS := $(ALL_SRCS) $(SIM_SRCS)
 OPTIMIZATION = -O2
 include ../../utils/make/Makefile.common
 
-INC_PATHS = -I./inc -I../inc -I../../base/inc -I../../3rd_party/inc -I../../utils/handcar -I$(PYTHON_INC)
+INC_PATHS = -I./inc -I../inc -I../../base/inc -isystem ../../3rd_party/inc -I../../utils/handcar -I$(PYTHON_INC)
 
 CFLAGS := $(CFLAGS) -DUNIT_TEST
 NODEPS:=clean
