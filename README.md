@@ -171,17 +171,61 @@ Generated tests are **not** committed to the repository (see `.gitignore`). One 
 | **Actions → Run workflow** (manual) | **No** | Same as above: **Artifacts** on that run. |
 | **Publish a release** (new tag + release on GitHub) | **Yes** — you create the release; the workflow **adds** a file to it | **Releases** → your version → **Assets** → `force-riscv-generated-tests-<tag>.tar.gz` (ELF, `.S`, optional logs, `MANIFEST.txt`). Stays until you remove the asset or release. |
 
-**Important:** pushing code does **not** create or update a GitHub Release. Releases are a separate step (for example **Releases → Draft a new release**, pick a tag, publish). Only that **publish** event uploads the tarball to the release page.
+**Important:** pushing code does **not** create or update a GitHub Release. Releases are a separate step. Only **publishing** a release fires the `release: published` trigger that uploads `force-riscv-generated-tests-<tag>.tar.gz` to the release **Assets** section.
 
-To create a release from the command line (after pushing a tag):
+#### What “publish a release” means
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-gh release create v0.1.0 --title "v0.1.0" --notes "Smoke test bundle attached by CI."
-```
+A **release** is a version on GitHub (usually a **tag** such as `v0.1.0`) with a title, notes, and optional **Assets** (downloadable files). **Publishing** makes that release live (not a draft). GitHub then runs the same [`.github/workflows/force-smoke-test.yml`](.github/workflows/force-smoke-test.yml) workflow with the `release` event; that run builds FORCE, generates the smoke test on the runner, packages a tarball, and attaches it to **this** release with `gh release upload`. The bundle is built fresh in CI—it is not copied from an older Actions artifact.
 
-After the workflow finishes, download `force-riscv-generated-tests-v0.1.0.tar.gz` from the release **Assets** section.
+#### Step-by-step: release with a downloadable smoke bundle
+
+1. **Choose the commit** you want to ship (often the latest `master`):
+
+   ```bash
+   git pull origin master
+   ```
+
+2. **Create a tag** on that commit (example `v0.1.0`):
+
+   ```bash
+   git tag v0.1.0
+   # optional annotated tag:
+   # git tag -a v0.1.0 -m "First smoke-test bundle"
+   ```
+
+3. **Push the tag** to GitHub:
+
+   ```bash
+   git push origin v0.1.0
+   ```
+
+4. **Create and publish the release** (pick one method).
+
+   **GitHub website**
+
+   1. Open the repository → **Releases** → **Draft a new release** (or **Create a new release**).
+   2. Select the tag `v0.1.0` (create the tag from the UI if needed).
+   3. Enter a **Release title** and **description**.
+   4. Click **Publish release** (not “Save draft” only—drafts do not send `published` until you publish).
+
+   **Command line** ([GitHub CLI](https://cli.github.com/)):
+
+   ```bash
+   gh release create v0.1.0 --title "v0.1.0" --notes "Smoke test bundle attached by CI."
+   ```
+
+5. **Wait for the workflow** — In **Actions**, open the **FORCE smoke test** run triggered by **Release** (not “Push”). It will install dependencies, build FORCE, run `bin/friscv -t utils/smoke/test_force.py`, then run the release-only steps **Package release bundle** and **Upload bundle to GitHub Release**.
+
+6. **Download the bundle** — On **Releases** → `v0.1.0` → **Assets**, download `force-riscv-generated-tests-v0.1.0.tar.gz`. Extract it for `test_force.Default.ELF`, `test_force.Default.S`, optional logs, and `MANIFEST.txt` (tag, commit SHA, template path).
+
+#### Release troubleshooting
+
+| Issue | What to check |
+|-------|----------------|
+| No tarball on the release | Release must be **published**, not left as draft only. |
+| Workflow did not run | The tag’s commit must include `.github/workflows/force-smoke-test.yml` with release upload steps. |
+| Upload step failed | The release job needs `contents: write` (already set in the workflow for `release` events). |
+| Re-run for the same tag | Publishing again or re-running may replace the asset (`gh release upload --clobber`). |
 
 ## Use FORCE-RISCV to generate a RISC-V testcase (ELF file) from a FORCE-RISCV test template
 
