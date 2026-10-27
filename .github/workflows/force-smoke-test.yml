@@ -59,7 +59,12 @@ jobs:
           fi
           mkdir -p "${HOME}/riscv-toolchain"
           tar -xJf /tmp/riscv-toolchain.tar.xz -C "${HOME}/riscv-toolchain"
-          echo "${HOME}/riscv-toolchain/riscv/bin" >> "${GITHUB_PATH}"
+          TOOLCHAIN_BIN="${HOME}/riscv-toolchain/riscv/bin"
+          test -x "${TOOLCHAIN_BIN}/riscv64-unknown-elf-gcc"
+          # GITHUB_PATH applies to later steps only; export for this step too.
+          echo "${TOOLCHAIN_BIN}" >> "${GITHUB_PATH}"
+          echo "RISCV_TOOLCHAIN_BIN=${TOOLCHAIN_BIN}" >> "${GITHUB_ENV}"
+          export PATH="${TOOLCHAIN_BIN}:${PATH}"
           riscv64-unknown-elf-gcc --version | head -1
 
       - name: Configure FORCE build environment
