@@ -1,5 +1,6 @@
-# Build FORCE-RISCV on Ubuntu, install a prebuilt RISC-V GNU toolchain from
-# riscv-collab releases, and run the standard smoke template generation.
+# Build FORCE-RISCV, generate the smoke test, and publish outputs:
+#   - push / PR / manual: workflow artifact (Actions tab)
+#   - release published: .tar.gz attached to the GitHub Release (Assets)
 name: FORCE smoke test
 
 on:
@@ -8,19 +9,24 @@ on:
   pull_request:
     branches: [master, main]
   workflow_dispatch:
+  release:
+    types: [published]
 
 env:
-  # Pin or override via repository variable TOOLCHAIN_RELEASE if desired.
   TOOLCHAIN_RELEASE: "2026.10.26"
 
 jobs:
   generate-smoke-test:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: ${{ github.event_name == 'release' && 'write' || 'read' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: ${{ github.event_name == 'release' && 0 || 1 }}
 
       - name: Install build dependencies
         run: |
@@ -59,7 +65,6 @@ jobs:
       - name: Source FORCE environment
         run: |
           set -euo pipefail
-          # setenv.bash must be sourced (not executed) so PYTHONPATH is exported.
           source ./setenv.bash
           echo "PYTHONPATH=${PYTHONPATH}" >> "${GITHUB_ENV}"
 
@@ -77,9 +82,9 @@ jobs:
           test -s test_force.Default.S
           riscv64-unknown-elf-readelf -h test_force.Default.ELF
 
-      - name: Upload generated artifacts
+      - name: Upload workflow artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: force-smoke-output
           path: |
@@ -88,3 +93,33 @@ jobs:
             gen.log
             sim.log
           if-no-files-found: ignore
+
+      - name: Package release bundle
+        if: github.event_name == 'release'
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.release.tag_name }}"
+          BUNDLE_DIR="force-riscv-generated-tests-${TAG}"
+          mkdir -p "${BUNDLE_DIR}"
+          cp -v test_force.Default.ELF test_force.Default.S "${BUNDLE_DIR}/"
+          for f in gen.log sim.log; do
+            if [ -f "${f}" ]; then
+              cp -v "${f}" "${BUNDLE_DIR}/"
+            fi
+          done
+          {
+            echo "release_tag=${TAG}"
+            echo "git_sha=${GITHUB_SHA}"
+            echo "template=utils/smoke/test_force.py"
+            echo "generated_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > "${BUNDLE_DIR}/MANIFEST.txt"
+          tar -czf "force-riscv-generated-tests-${TAG}.tar.gz" "${BUNDLE_DIR}"
+
+      - name: Upload bundle to GitHub Release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.release.tag_name }}"
+          gh release upload "${TAG}" "force-riscv-generated-tests-${TAG}.tar.gz" --clobber

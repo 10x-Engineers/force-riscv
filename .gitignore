@@ -16,3 +16,12 @@ handcar/standalone/
 make_area/
 output/
 build/
+
+# FORCE-RISCV test generation outputs (e.g. smoke: bin/friscv -t utils/smoke/test_force.py)
+*.Default.ELF
+*.Default.S
+gen.log
+gen.err
+sim.log
+fpix_sim.log
+generated_tests/
