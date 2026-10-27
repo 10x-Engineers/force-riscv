@@ -1,0 +1,90 @@
+# Build FORCE-RISCV on Ubuntu, install a prebuilt RISC-V GNU toolchain from
+# riscv-collab releases, and run the standard smoke template generation.
+name: FORCE smoke test
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+env:
+  # Pin or override via repository variable TOOLCHAIN_RELEASE if desired.
+  TOOLCHAIN_RELEASE: "2026.10.26"
+
+jobs:
+  generate-smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            g++ \
+            make \
+            python3 \
+            python3-dev \
+            wget \
+            xz-utils
+
+      - name: Install RISC-V GNU toolchain (prebuilt release)
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          ASSET="riscv64-elf-ubuntu-${VERSION_ID}-gcc.tar.xz"
+          BASE_URL="https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/${TOOLCHAIN_RELEASE}"
+          echo "Downloading ${BASE_URL}/${ASSET}"
+          wget -q "${BASE_URL}/${ASSET}" -O /tmp/riscv-toolchain.tar.xz
+          mkdir -p "${HOME}/riscv-toolchain"
+          tar -xJf /tmp/riscv-toolchain.tar.xz -C "${HOME}/riscv-toolchain"
+          echo "${HOME}/riscv-toolchain/riscv/bin" >> "${GITHUB_PATH}"
+          riscv64-unknown-elf-gcc --version | head -1
+
+      - name: Configure FORCE build environment
+        run: |
+          set -euo pipefail
+          PY_MAJOR_MINOR="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+          echo "FORCE_CC=g++" >> "${GITHUB_ENV}"
+          echo "FORCE_PYTHON_VER=${PY_MAJOR_MINOR}" >> "${GITHUB_ENV}"
+          echo "FORCE_PYTHON_INC=/usr/include/python${PY_MAJOR_MINOR}" >> "${GITHUB_ENV}"
+          echo "FORCE_PYTHON_LIB=/usr/lib/x86_64-linux-gnu" >> "${GITHUB_ENV}"
+
+      - name: Source FORCE environment
+        run: |
+          set -euo pipefail
+          # setenv.bash must be sourced (not executed) so PYTHONPATH is exported.
+          source ./setenv.bash
+          echo "PYTHONPATH=${PYTHONPATH}" >> "${GITHUB_ENV}"
+
+      - name: Build FORCE-RISCV
+        run: |
+          set -euo pipefail
+          make -j"$(nproc)"
+          make tests
+
+      - name: Generate smoke test
+        run: |
+          set -euo pipefail
+          bin/friscv -t utils/smoke/test_force.py
+          test -s test_force.Default.ELF
+          test -s test_force.Default.S
+          riscv64-unknown-elf-readelf -h test_force.Default.ELF
+
+      - name: Upload generated artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: force-smoke-output
+          path: |
+            test_force.Default.ELF
+            test_force.Default.S
+            gen.log
+            sim.log
+          if-no-files-found: ignore
