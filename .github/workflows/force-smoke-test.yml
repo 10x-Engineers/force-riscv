@@ -93,7 +93,9 @@ jobs:
           set -euo pipefail
           export PATH="${RISCV_TOOLCHAIN_BIN}:${PATH}"
           ./utils/smoke/run_smoke_list.sh
-          riscv64-unknown-elf-readelf -h smoke-output/rv64/test_force.Default.ELF
+          elf="$(find smoke-output -name '*.Default.ELF' | head -1)"
+          test -n "${elf}"
+          riscv64-unknown-elf-readelf -h "${elf}"
           find smoke-output -name '*.Default.ELF' -print
 
       - name: Upload workflow artifact

@@ -161,9 +161,40 @@ These artifacts are listed in `.gitignore` so local runs are not committed by mi
 
 For any template `<name>_force.py`, outputs are named `<name>.Default.ELF` and `<name>.Default.S`.
 
+### Smoke list: the file that selects generated tests
+
+[`utils/smoke/smoke-list`](utils/smoke/smoke-list) is the manifest for batch generation. **Each uncommented line is one test.** CI does not hard-code a single template; it runs [`utils/smoke/run_smoke_list.sh`](utils/smoke/run_smoke_list.sh), which reads this file.
+
+| Column | Meaning |
+|--------|---------|
+| `name` | Output directory: `smoke-output/<name>/` |
+| `config` | Generator config passed as `friscv --cfg` (`config/riscv_rv64.config`, `config/riscv_rv32.config`, `config/riscv_rv64_sv39.config`) |
+| `template` | Python template passed as `friscv --test` |
+| extra | Optional `friscv` flags, such as `--options instruction_count=16` |
+
+Lines that start with `#` are comments. To generate another test, copy a line, give it a new `name`, and point it at a config and a `*_force.py` template. The current list groups entries by config: RV64 smoke, integer, random, loop, and vector-add; RV32 smoke, integer, and loop; Sv39 smoke and random.
+
+Run the whole list locally (after `source ./setenv.bash` and `make`):
+
+```bash
+./utils/smoke/run_smoke_list.sh
+```
+
+Outputs (gitignored) look like:
+
+```text
+smoke-output/INDEX.txt
+smoke-output/rv64_add_sra/test_force.Default.ELF
+smoke-output/rv64_add_sra/test_force.Default.S
+smoke-output/rv64_vector_add/vector_simple_add_force.Default.ELF
+...
+```
+
+`INDEX.txt` records the name, config, template, and ELF path for every line.
+
 ### CI smoke test and downloadable outputs
 
-Generated tests are **not** committed to the repository (see `.gitignore`). One workflow — [`.github/workflows/force-smoke-test.yml`](.github/workflows/force-smoke-test.yml) — builds FORCE, then generates **one test per line** in [`utils/smoke/smoke-list`](utils/smoke/smoke-list) (config + template). Results land in `smoke-output/<name>/` (`*.Default.ELF`, `*.Default.S`, logs) plus `INDEX.txt`. Add a line to the smoke list to generate another config; the next CI run uploads the new set.
+Generated tests are **not** committed to the repository (see `.gitignore`). [`.github/workflows/force-smoke-test.yml`](.github/workflows/force-smoke-test.yml) builds FORCE and generates **every line** in the smoke list. The artifact `force-smoke-output` is that `smoke-output/` tree. Change the smoke list and the next workflow run generates the new set.
 
 Publishing depends on **how** the workflow was started:
 
