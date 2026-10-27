@@ -1,0 +1,16 @@
+# Smoke list: one generated test per line.
+# CI (and utils/smoke/run_smoke_list.sh) reads this file and uploads the
+# results as the force-smoke-output artifact.
+#
+# Format (whitespace-separated, # comments and blank lines ignored):
+#   name  config  template  [extra friscv arguments...]
+#
+# name      directory under smoke-output/
+# config    FORCE --cfg path (relative to the repository root)
+# template  FORCE --test path (relative to the repository root)
+#
+# config/riscv-cva6.config is omitted: it still points at removed XML paths.
+
+rv64       config/riscv_rv64.config       utils/smoke/test_force.py
+rv32       config/riscv_rv32.config       utils/smoke/test_force.py
+rv64_sv39  config/riscv_rv64_sv39.config  utils/smoke/test_force.py

@@ -88,36 +88,28 @@ jobs:
           make -j"$(nproc)"
           make tests
 
-      - name: Generate smoke test
+      - name: Generate smoke tests from smoke-list
         run: |
           set -euo pipefail
-          bin/friscv -t utils/smoke/test_force.py
-          test -s test_force.Default.ELF
-          test -s test_force.Default.S
-          riscv64-unknown-elf-readelf -h test_force.Default.ELF
+          export PATH="${RISCV_TOOLCHAIN_BIN}:${PATH}"
+          ./utils/smoke/run_smoke_list.sh
+          riscv64-unknown-elf-readelf -h smoke-output/rv64/test_force.Default.ELF
+          find smoke-output -name '*.Default.ELF' -print
 
       - name: Upload workflow artifact
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
           name: force-smoke-output
-          path: |
-            test_force.Default.ELF
-            test_force.Default.S
-            gen.log
-            sim.log
-          if-no-files-found: ignore
+          path: smoke-output/
+          if-no-files-found: error
 
       - name: Upload generated test bundle for release job
         if: github.event_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: release-generated-tests
-          path: |
-            test_force.Default.ELF
-            test_force.Default.S
-            gen.log
-            sim.log
+          path: smoke-output/
           if-no-files-found: error
 
   publish-release-tests:
@@ -138,19 +130,15 @@ jobs:
           TAG="${{ github.event.release.tag_name }}"
           BUNDLE_DIR="force-riscv-generated-tests-${TAG}"
           mkdir -p "${BUNDLE_DIR}"
-          cp -v test_force.Default.ELF test_force.Default.S "${BUNDLE_DIR}/"
-          for f in gen.log sim.log; do
-            if [ -f "${f}" ]; then
-              cp -v "${f}" "${BUNDLE_DIR}/"
-            fi
-          done
+          cp -a . "${BUNDLE_DIR}/"
           {
             echo "release_tag=${TAG}"
             echo "git_sha=${{ github.sha }}"
-            echo "template=utils/smoke/test_force.py"
+            echo "smoke_list=utils/smoke/smoke-list"
             echo "generated_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo
             echo "This archive contains only FORCE-generated smoke test outputs."
+            echo "Each subdirectory is one smoke-list entry (see INDEX.txt)."
             echo "Do not download the GitHub 'Source code' zip/tar on the release page."
           } > "${BUNDLE_DIR}/MANIFEST.txt"
           tar -czf "force-riscv-generated-tests-${TAG}.tar.gz" "${BUNDLE_DIR}"

@@ -163,7 +163,9 @@ For any template `<name>_force.py`, outputs are named `<name>.Default.ELF` and `
 
 ### CI smoke test and downloadable outputs
 
-Generated tests are **not** committed to the repository (see `.gitignore`). One workflow — [`.github/workflows/force-smoke-test.yml`](.github/workflows/force-smoke-test.yml) — builds FORCE, runs `utils/smoke/test_force.py`, and publishes outputs depending on **how** it was started:
+Generated tests are **not** committed to the repository (see `.gitignore`). One workflow — [`.github/workflows/force-smoke-test.yml`](.github/workflows/force-smoke-test.yml) — builds FORCE, then generates **one test per line** in [`utils/smoke/smoke-list`](utils/smoke/smoke-list) (config + template). Results land in `smoke-output/<name>/` (`*.Default.ELF`, `*.Default.S`, logs) plus `INDEX.txt`. Add a line to the smoke list to generate another config; the next CI run uploads the new set.
+
+Publishing depends on **how** the workflow was started:
 
 | What you do | Does a GitHub **Release** get published? | Where to download the smoke test |
 |-------------|------------------------------------------|----------------------------------|

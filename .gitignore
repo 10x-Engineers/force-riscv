@@ -25,3 +25,4 @@ gen.err
 sim.log
 fpix_sim.log
 generated_tests/
+smoke-output/
