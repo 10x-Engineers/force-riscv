@@ -169,9 +169,11 @@ Generated tests are **not** committed to the repository (see `.gitignore`). One 
 |-------------|------------------------------------------|----------------------------------|
 | **Push** or **pull request** to `master` / `main` | **No** — only CI runs | **Actions** → workflow run → **Artifacts** → `force-smoke-output` (ELF, `.S`, logs). Artifacts expire after GitHub’s retention period (often 90 days). |
 | **Actions → Run workflow** (manual) | **No** | Same as above: **Artifacts** on that run. |
-| **Publish a release** (new tag + release on GitHub) | **Yes** — you create the release; the workflow **adds** a file to it | **Releases** → your version → **Assets** → `force-riscv-generated-tests-<tag>.tar.gz` (ELF, `.S`, optional logs, `MANIFEST.txt`). Stays until you remove the asset or release. |
+| **Publish a release** (new tag + release on GitHub) | **Yes** — you create the release; CI **attaches** the generated bundle | **Releases** → your version → **Assets** → **`force-riscv-generated-tests-<tag>.tar.gz` only** (see warning below). |
 
-**Important:** pushing code does **not** create or update a GitHub Release. Releases are a separate step. Only **publishing** a release fires the `release: published` trigger that uploads `force-riscv-generated-tests-<tag>.tar.gz` to the release **Assets** section.
+**Important:** pushing code does **not** create or update a GitHub Release. Only **publishing** a release runs the upload job that attaches `force-riscv-generated-tests-<tag>.tar.gz`.
+
+**Do not download “Source code (zip)” or “Source code (tar.gz)”** on the release page — those are automatic **repository source** archives (for example `force-riscv-1.0.0.tar.gz`), not FORCE-generated tests. The generated smoke test is only in **`force-riscv-generated-tests-<tag>.tar.gz`** under **Assets**. CI also removes any other uploaded assets from the release so **Assets** lists only that bundle (GitHub may still show immutable “Source code” links above Assets; ignore them for test downloads).
 
 #### What “publish a release” means
 
@@ -214,18 +216,21 @@ A **release** is a version on GitHub (usually a **tag** such as `v0.1.0`) with a
    gh release create v0.1.0 --title "v0.1.0" --notes "Smoke test bundle attached by CI."
    ```
 
-5. **Wait for the workflow** — In **Actions**, open the **FORCE smoke test** run triggered by **Release** (not “Push”). It will install dependencies, build FORCE, run `bin/friscv -t utils/smoke/test_force.py`, then run the release-only steps **Package release bundle** and **Upload bundle to GitHub Release**.
+5. **Wait for the workflow** — In **Actions**, open the **FORCE smoke test** run triggered by **Release** (not “Push”). It runs **build-and-generate**, then **publish-release-tests** (package, remove non-generated assets, upload the bundle).
 
-6. **Download the bundle** — On **Releases** → `v0.1.0` → **Assets**, download `force-riscv-generated-tests-v0.1.0.tar.gz`. Extract it for `test_force.Default.ELF`, `test_force.Default.S`, optional logs, and `MANIFEST.txt` (tag, commit SHA, template path).
+6. **Download the bundle** — On **Releases** → `v0.1.0` → **Assets**, download **`force-riscv-generated-tests-v0.1.0.tar.gz`** (not Source code). Extract for `test_force.Default.ELF`, `test_force.Default.S`, optional logs, and `MANIFEST.txt`.
+
+If a release was published **before** CI succeeded, delete the release (or publish a new tag such as `v1.0.1`) and publish again so the workflow can attach the bundle.
 
 #### Release troubleshooting
 
 | Issue | What to check |
 |-------|----------------|
-| No tarball on the release | Release must be **published**, not left as draft only. |
-| Workflow did not run | The tag’s commit must include `.github/workflows/force-smoke-test.yml` with release upload steps. |
-| Upload step failed | The release job needs `contents: write` (already set in the workflow for `release` events). |
-| Re-run for the same tag | Publishing again or re-running may replace the asset (`gh release upload --clobber`). |
+| No tarball on the release | Release must be **published**; CI must **complete successfully** (check **Actions**). Re-publish after fixing CI if needed. |
+| Downloaded full repo, no `.ELF` | You fetched **Source code** (`force-riscv-1.0.0.tar.gz`), not **`force-riscv-generated-tests-v1.0.0.tar.gz`**. |
+| Workflow did not run | Default branch must contain a valid `.github/workflows/force-smoke-test.yml`. |
+| Toolchain step failed | CI falls back to Ubuntu **24.04** / **22.04** toolchain assets if the runner version has no prebuilt package. |
+| Re-run for the same tag | Delete and recreate the release, or tag a new version; `published` fires once per publish. |
 
 ## Use FORCE-RISCV to generate a RISC-V testcase (ELF file) from a FORCE-RISCV test template
 
