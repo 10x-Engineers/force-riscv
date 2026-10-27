@@ -2,36 +2,47 @@
 #
 # Every uncommented line becomes one directory under smoke-output/ and one
 # entry in the force-smoke-output artifact (and in a release bundle).
-# Edit this file to add, remove, or retarget a generated test.
 #
 # Format (whitespace-separated). '#' starts a comment. Blank lines are ignored.
 #
 #   name  config  template  [extra friscv arguments...]
 #
-#   name       output directory (smoke-output/<name>/)
-#   config     path passed to friscv --cfg
-#   template   path passed to friscv --test  (a *_force.py template)
-#   extra      optional friscv flags, for example: --options instruction_count=16
+# Size is controlled with --options (comma-separated, no spaces):
+#   instruction_count=N   how many instructions the template emits
+#   loop_count=N          iterations for the loop template
+#   vsew=E                vector element width field (0=e8 1=e16 2=e32 3=e64)
+#   vlmul=M               vector register group (0=m1 1=m2 2=m4 3=m8)
 #
 # Paths are relative to the repository root.
 # config/riscv-cva6.config is not listed: its XML paths are no longer in the tree.
-#
-# Copy a line, change the name, and adjust config or template to add a test:
-#   my_test  config/riscv_rv64.config  examples/riscv/basic_fpu_force.py  --options instruction_count=8
 
 # --- config/riscv_rv64.config : RV64, default virtual memory (Sv48) ---
-rv64_add_sra     config/riscv_rv64.config  utils/smoke/test_force.py
-rv64_integer     config/riscv_rv64.config  utils/smoke/riscv_force.py
-rv64_random      config/riscv_rv64.config  examples/riscv/basic_random_01_force.py  --options instruction_count=16
-rv64_loop        config/riscv_rv64.config  tests/riscv/loop/loop_basic_force.py
-rv64_vector_add  config/riscv_rv64.config  tests/riscv/vector/vector_simple_add_force.py
-rv64_vector_moves_rtz  config/riscv_rv64.config  tests/riscv/vector/vector_moves_and_rtz_cvt_force.py
+rv64_add_sra     config/riscv_rv64.config  utils/smoke/test_force.py  --options instruction_count=128
+rv64_integer     config/riscv_rv64.config  utils/smoke/riscv_force.py  --options instruction_count=64
+rv64_random      config/riscv_rv64.config  examples/riscv/basic_random_01_force.py  --options instruction_count=512
+rv64_loop        config/riscv_rv64.config  tests/riscv/loop/loop_basic_force.py  --options loop_count=128
+rv64_vector_add  config/riscv_rv64.config  tests/riscv/vector/vector_simple_add_force.py  --options instruction_count=256
+rv64_vector_moves_rtz  config/riscv_rv64.config  tests/riscv/vector/vector_moves_and_rtz_cvt_force.py  --options instruction_count=16
+rv64_vector_ldst  config/riscv_rv64.config  tests/riscv/vector/vector_unit_stride_load_store_force.py  --options instruction_count=128
+
+# Vector vtype configurations. Each line locks SEW and LMUL, then emits 256 integer vector ops.
+# Template: utils/smoke/vector_config_force.py
+rv64_vec_e8m1    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=0,vlmul=0
+rv64_vec_e16m1   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=1,vlmul=0
+rv64_vec_e32m1   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=0
+rv64_vec_e64m1   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=3,vlmul=0
+rv64_vec_e32m2   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=1
+rv64_vec_e16m4   config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=1,vlmul=2
+rv64_vec_e8m8    config/riscv_rv64.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=0,vlmul=3
 
 # --- config/riscv_rv32.config : RV32 ---
-rv32_add_sra     config/riscv_rv32.config  utils/smoke/test_force.py
-rv32_integer     config/riscv_rv32.config  tests/riscv/rv32/rv32i_force.py
-rv32_loop        config/riscv_rv32.config  tests/riscv/loop/loop_basic_force.py
+rv32_add_sra     config/riscv_rv32.config  utils/smoke/test_force.py  --options instruction_count=128
+rv32_integer     config/riscv_rv32.config  tests/riscv/rv32/rv32i_force.py  --options instruction_count=256
+rv32_loop        config/riscv_rv32.config  tests/riscv/loop/loop_basic_force.py  --options loop_count=128
+rv32_vec_e32m1   config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=0
+rv32_vec_e16m2   config/riscv_rv32.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=1,vlmul=1
 
 # --- config/riscv_rv64_sv39.config : RV64 with Sv39 page tables ---
-rv64_sv39_add_sra  config/riscv_rv64_sv39.config  utils/smoke/test_force.py
-rv64_sv39_random   config/riscv_rv64_sv39.config  examples/riscv/basic_random_01_force.py  --options instruction_count=16
+rv64_sv39_add_sra  config/riscv_rv64_sv39.config  utils/smoke/test_force.py  --options instruction_count=128
+rv64_sv39_random   config/riscv_rv64_sv39.config  examples/riscv/basic_random_01_force.py  --options instruction_count=512
+rv64_sv39_vec_e32m1  config/riscv_rv64_sv39.config  utils/smoke/vector_config_force.py  --options instruction_count=256,vsew=2,vlmul=0

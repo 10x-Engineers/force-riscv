@@ -36,10 +36,13 @@ class MainSequence(VectorTestSequence):
         )
 
     def generate(self, **kargs):
-        for instr in self._mInstrList:
-            instr_id = self.genInstruction(instr)
-            if not instr_id:
-                self.error("Instruction %s did not generate correctly" % instr)
+        (count_opt, count_opt_valid) = self.getOption("instruction_count")
+        repeats = int(count_opt) if count_opt_valid else 1
+        for _ in range(repeats):
+            for instr in self._mInstrList:
+                instr_id = self.genInstruction(instr)
+                if not instr_id:
+                    self.error("Instruction %s did not generate correctly" % instr)
 
     def _getInstructionList(self):
         return self._mInstrList

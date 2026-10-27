@@ -170,9 +170,13 @@ For any template `<name>_force.py`, outputs are named `<name>.Default.ELF` and `
 | `name` | Output directory: `smoke-output/<name>/` |
 | `config` | Generator config passed as `friscv --cfg` (`config/riscv_rv64.config`, `config/riscv_rv32.config`, `config/riscv_rv64_sv39.config`) |
 | `template` | Python template passed as `friscv --test` |
-| extra | Optional `friscv` flags, such as `--options instruction_count=16` |
+| extra | Optional `friscv` flags. `--options instruction_count=N` sets how many instructions a template emits. Vector lines also pass `vsew` and `vlmul`. |
 
-Lines that start with `#` are comments. To generate another test, copy a line, give it a new `name`, and point it at a config and a `*_force.py` template. The current list groups entries by config: RV64 smoke, integer, random, loop, and vector-add; RV32 smoke, integer, and loop; Sv39 smoke and random.
+Lines that start with `#` are comments. To generate another test, copy a line, give it a new `name`, and point it at a config and a `*_force.py` template.
+
+Every smoke-list line asks for a long sequence (typically 128 to 512 instructions, or a 128-iteration loop). A bare `bin/friscv -t utils/smoke/test_force.py` without `--options` is still the short two-instruction demo.
+
+Vector lines use [`utils/smoke/vector_config_force.py`](utils/smoke/vector_config_force.py). `vsew` is the element width (`0` = 8-bit, `1` = 16-bit, `2` = 32-bit, `3` = 64-bit). `vlmul` is the register group (`0` = m1, `1` = m2, `2` = m4, `3` = m8). The RV64 list covers those SEW and LMUL combinations, plus an RV32 and an Sv39 vector case, and longer vector-add, move/RTZ, and unit-stride load/store runs.
 
 Run the whole list locally (after `source ./setenv.bash` and `make`):
 

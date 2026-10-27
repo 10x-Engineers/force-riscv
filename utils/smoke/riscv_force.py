@@ -28,12 +28,15 @@ class MainSequence(Sequence):
             "LUI##",
         ]  # ["JAL", "BEQ"]
 
-        for instr in instr_list:
-            self.genInstruction("%sRISCV" % instr)
+        (count_opt, count_opt_valid) = self.getOption("instruction_count")
+        repeats = int(count_opt) if count_opt_valid else 1
+        for _ in range(repeats):
+            for instr in instr_list:
+                self.genInstruction("%sRISCV" % instr)
 
-        # limit range due to spike standlone memory foot print limitation
-        self.genInstruction("LB##RISCV", {"LSTarget": "0x80000000-0x83ffffff"})
-        self.genInstruction("SB##RISCV", {"LSTarget": "0x80000000-0x83ffffff"})
+            # limit range due to spike standlone memory foot print limitation
+            self.genInstruction("LB##RISCV", {"LSTarget": "0x80000000-0x83ffffff"})
+            self.genInstruction("SB##RISCV", {"LSTarget": "0x80000000-0x83ffffff"})
 
 
 #  Points to the MainSequence defined in this file

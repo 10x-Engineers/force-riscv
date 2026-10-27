@@ -30,8 +30,11 @@ class MainSequence(Sequence):
         orig_gpr_val = self.random32()
         self.initializeRegister(gpr_name, orig_gpr_val)
 
+        (count_opt, count_opt_valid) = self.getOption("loop_count")
+        loop_count = int(count_opt) if count_opt_valid else 3
+
         loop_control = LoopControl(self.genThread)
-        loop_control.start(LoopCount=3)
+        loop_control.start(LoopCount=loop_count)
 
         self.genInstruction("ADDI##RISCV", {"rd": gpr_index, "rs1": gpr_index, "simm12": 1})
 
@@ -41,7 +44,7 @@ class MainSequence(Sequence):
         if not valid:
             self.error("Unable to read register %s" % gpr_name)
 
-        expected_gpr_val = orig_gpr_val + 3
+        expected_gpr_val = orig_gpr_val + loop_count
         if gpr_val != expected_gpr_val:
             # self.error('Unexpected register value: Expected = 0x%x,
             #            Actual = 0x%x' % (expected_gpr_val, gpr_val))

@@ -66,8 +66,12 @@ class MainSequence(Sequence):
             )
 
         # generate sequences of random instructions...
-
-        self.genRandomInstrs(RV32I_instructions, 10, 50)
+        (count_opt, count_opt_valid) = self.getOption("instruction_count")
+        if count_opt_valid:
+            for _ in range(int(count_opt)):
+                self.genInstruction(self.pickWeighted(RV32I_instructions))
+        else:
+            self.genRandomInstrs(RV32I_instructions, 10, 50)
 
     # generate some random instructions...
 

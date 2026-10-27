@@ -20,8 +20,14 @@ from base.Sequence import Sequence
 
 class MainSequence(Sequence):
     def generate(self, **kargs):
-        self.genInstruction("ADD##RISCV")
-        self.genInstruction("SRA##RISCV")
+        # Repeat the pair instruction_count times. Default stays at 1 so a
+        # bare smoke run is still the short demo; the smoke list passes a
+        # larger count.
+        (count_opt, count_opt_valid) = self.getOption("instruction_count")
+        count = int(count_opt) if count_opt_valid else 1
+        for _ in range(count):
+            self.genInstruction("ADD##RISCV")
+            self.genInstruction("SRA##RISCV")
 
 
 #  Points to the MainSequence defined in this file

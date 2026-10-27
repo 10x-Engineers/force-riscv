@@ -128,7 +128,11 @@ class VectorTestSequence(Sequence):
         pass
 
     # Return the maximum number of test instructions to generate.
+    # Pass --options instruction_count=N to enlarge a smoke-list run.
     def _getMaxInstructionCount(self):
+        (count_opt, count_opt_valid) = self.getOption("instruction_count")
+        if count_opt_valid:
+            return int(count_opt)
         return 100
 
     # Return a list of test instructions to randomly choose from.
