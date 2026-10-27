@@ -19,7 +19,8 @@
 [[ "$0" == "${BASH_SOURCE[0]}" ]] && sourced=False || sourced=True
 
 # was the current environment sourced?
-[[ -n "$FORCE_SOURCED" ]] && force_env_sourced=True || force_env_sourced=False
+# ${VAR-} so this script can be sourced under `set -u` (CI uses nounset).
+[[ -n "${FORCE_SOURCED-}" ]] && force_env_sourced=True || force_env_sourced=False
 
 # pick correct exit method
 if [ "$sourced" = "True" ]; then
@@ -32,7 +33,7 @@ CURPATH=$(pwd)
 ROOTPATH="${CURPATH}"
 
 # capture current PYTHONPATH before modifying it
-if [ -n "$PYTHONPATH" ]; then
+if [ -n "${PYTHONPATH-}" ]; then
   OLD_PYTHONPATH="${PYTHONPATH}"
 else
   OLD_PYTHONPATH="False"
@@ -48,10 +49,10 @@ declare -a PATHS=(
 )
 
 # already run?
-if [ -n "$FORCE_ORIG_PYTHONPATH" ]; then
+if [ -n "${FORCE_ORIG_PYTHONPATH-}" ]; then
 
   # requesting cleanup?
-  if [ "$1" = "-u" ]; then
+  if [ "${1-}" = "-u" ]; then
 
     # is existing env sourced?
     if [ "$force_env_sourced" = "True" ]; then
@@ -79,14 +80,14 @@ if [ -n "$FORCE_ORIG_PYTHONPATH" ]; then
 
 # not already run
 else
-  if [ "$1" = "-u" ]; then
+  if [ "${1-}" = "-u" ]; then
     echo Environment not set, exiting without action
     $ret 2
   fi
 
   # setup PYTHONPATH
   for val in "${PATHS[@]}"; do
-    if [ -n "$PYTHONPATH" ]; then
+    if [ -n "${PYTHONPATH-}" ]; then
       PYTHONPATH="$ROOTPATH"/"$val":"$PYTHONPATH"
     else
       PYTHONPATH="$ROOTPATH"/"$val"
